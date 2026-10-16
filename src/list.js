@@ -11,7 +11,7 @@ import { toggle, watchlist } from './state.js';
 export function initList(refresh) {
   const results = document.querySelector('#results');
   const count = document.querySelector('#watchlist-count');
-
+  
   results.addEventListener('click', (event) => {
     const button = event.target.closest('button[data-action]');
     const card = button?.closest('li[data-id]');
@@ -27,8 +27,14 @@ export function initList(refresh) {
       toggle(id);
       count.textContent = String(watchlist.size);
       refresh();
-      const nextButton = document.querySelector(`li[data-id="${id}"] [data-action="toggle"]`);
-      nextButton?.focus();
+      
+      const nextCard = [...results.querySelectorAll('li[data-id]')].find((item) => Number(item.dataset.id) === id);
+      const nextButton = nextCard?.querySelector('button[data-action="toggle"]');
+      
+      if (nextButton) {
+        nextButton.setAttribute('aria-pressed', String(watchlist.has(id)));
+        nextButton.focus();
+      }
     }
   });
 }
