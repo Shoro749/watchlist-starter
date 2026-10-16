@@ -1,5 +1,5 @@
 /** @typedef {import('./state.js').Show} Show */
-import { shows } from './state.js';
+import { shows, watchlist } from './state.js';
 
 /**
  * C1. Показує серіали в списку #results — по картці з шаблону #show-card на кожен, у тому
@@ -25,6 +25,8 @@ export function renderShows(list) {
           : show[name] ?? '—';
       field.textContent = String(value);
     }
+
+    card.querySelector('[data-action="toggle"]')?.setAttribute('aria-pressed', String(watchlist.has(show.id)));
 
     fragment.append(card);
   }

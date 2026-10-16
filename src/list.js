@@ -1,6 +1,7 @@
 import { openDetails } from './details.js';
 import { toggle, watchlist } from './state.js';
 
+
 /**
  * C2. Підключає кнопки карток у списку #results: «До списку» додає серіал до мого списку або
  * прибирає з нього, «Детальніше» відкриває діалог (openDetails з details.js). main.js викликає
@@ -11,7 +12,7 @@ import { toggle, watchlist } from './state.js';
 export function initList(refresh) {
   const results = document.querySelector('#results');
   const count = document.querySelector('#watchlist-count');
-  
+ 
   results.addEventListener('click', (event) => {
     const button = event.target.closest('button[data-action]');
     const card = button?.closest('li[data-id]');
@@ -24,17 +25,20 @@ export function initList(refresh) {
     }
 
     if (button.dataset.action === 'toggle') {
-      toggle(id);
+      const cards = [...results.querySelectorAll('li[data-id]')];
+      const index = cards.indexOf(card);
+      const nextId = cards[index + 1]?.dataset.id;
+      const previousId = cards[index - 1]?.dataset.id;
+
+      const isInWatchlist = toggle(id);
       count.textContent = String(watchlist.size);
       refresh();
-      
-      const nextCard = [...results.querySelectorAll('li[data-id]')].find((item) => Number(item.dataset.id) === id);
-      const nextButton = nextCard?.querySelector('button[data-action="toggle"]');
-      
-      if (nextButton) {
-        nextButton.setAttribute('aria-pressed', String(watchlist.has(id)));
-        nextButton.focus();
-      }
+
+      const focusId = isInWatchlist ? String(id) : (nextId ?? previousId);
+      const focusCard = [...results.querySelectorAll('li[data-id]')].find((item) => item.dataset.id === focusId,);
+      const focusButton = focusCard?.querySelector('button[data-action="toggle"]');
+
+      (focusButton ?? document.querySelector('#results-heading'))?.focus();
     }
   });
 }

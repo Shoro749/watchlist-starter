@@ -26,5 +26,9 @@ export function initFilters(refresh) {
 
   form.addEventListener('input', refresh);
   form.addEventListener('change', refresh);
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    refresh();
+  });
   form.addEventListener('reset', () => setTimeout(refresh, 0));
 }
